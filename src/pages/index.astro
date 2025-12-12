@@ -1,0 +1,135 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
+		<Header />
+
+		<div class="mt-8 mb-16 max-w-3xl mx-auto px-6 relative group">
+			<img 
+				src="/base.png" 
+				alt="Main Visual" 
+				class="w-full h-auto object-contain rounded-xl shadow-sm relative z-0"
+			/>
+			<img 
+				src="/pen.png" 
+				alt="Pen" 
+				class="absolute z-10 
+					   top-[-2%] left-[17.5%] w-[40%] 
+					   scroll-trigger opacity-0 translate-y-12 transition-all duration-1000 ease-out
+					   delay-500"
+			/>
+		</div>
+		<main class="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 mt-12 mb-24">
+			
+			<div class="md:col-span-2">
+				<h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-10 border-b pb-2">Latest Entries</h2>
+				
+				<ul class="space-y-16">
+					{posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`} class="group block">
+								<article class="flex flex-col gap-3">
+									<h3 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors leading-tight">
+										{post.data.title}
+									</h3>
+									
+									<div class="flex items-center gap-3 text-sm font-mono text-slate-400">
+										<time datetime={post.data.pubDate.toISOString()}>
+											{post.data.pubDate.toLocaleDateString('ja-JP')}
+										</time>
+									</div>
+
+									<p class="text-slate-600 leading-relaxed text-sm md:text-base line-clamp-3">
+										{post.data.description}
+									</p>
+									
+									<div class="text-xs font-bold text-slate-400 group-hover:text-slate-600 underline decoration-slate-300 underline-offset-4 mt-1 transition-colors">
+										READ MORE &rarr;
+									</div>
+								</article>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<aside class="md:col-span-1 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 pt-8 md:pt-0">
+				<div class="sticky top-12">
+					<h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-6">About me / Essay </h2>
+					
+					<div class="space-y-8">
+						<div>
+							<h3 class="font-bold text-lg mb-2">Hi</h3>
+							<p class="text-sm text-slate-600 leading-relaxed">
+								hagiwaraです。<br>
+								煎餅汁啜り飲んでないです<br>
+								座右の銘：<br>
+								出る杭になれ！<br>
+							</p>
+						</div>
+					</div>
+				</div>
+			</aside>
+			</main>
+		<Footer />
+	</body>
+</html>
+
+<script>
+	// ▼▼▼ アニメーション用スクリプト（そのまま維持） ▼▼▼
+	
+	// パララックス
+	const images = document.querySelectorAll('.parallax-image');
+	function handleScroll() {
+		images.forEach((img) => {
+			const rect = img.getBoundingClientRect();
+			const distanceFromCenter = rect.top + rect.height / 2 - window.innerHeight / 2;
+			const moveY = distanceFromCenter * -0.1; 
+			(img as HTMLElement).style.transform = `translateY(${moveY}px) scale(1.05)`;
+		});
+	}
+	window.addEventListener('scroll', handleScroll);
+	handleScroll();
+
+	// 万年筆アニメーション
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				const target = entry.target;
+				target.classList.remove('opacity-0');
+				target.classList.remove('translate-y-12');
+				target.classList.remove('translate-y-20');
+				observer.unobserve(target);
+			}
+		});
+	}, {
+		rootMargin: '0px 0px -10% 0px'
+	});
+
+	document.querySelectorAll('.scroll-trigger').forEach(el => observer.observe(el));
+</script>
+
+<style>
+	/* 使わなくなったクラスもありますが、念のため残しています */
+	.aspect-\[4\/3\] {
+		overflow: hidden; 
+	}
+	.parallax-image {
+		will-change: transform;
+		transition: transform 0.1s ease-out;
+	}
+</style>
