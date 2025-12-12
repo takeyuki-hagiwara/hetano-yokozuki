@@ -44,13 +44,6 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 				margin-top: 0.5em;
 			}
 		</style>
-
-        <style is:global>
-            p, h1, h2, h3, h4, h5, h6, a, span, li, div {
-                overflow-wrap: anywhere !important;
-                word-break: break-word !important;
-            }
-        </style>
 	</head>
 
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
@@ -97,13 +90,12 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 				)}
 
 				{/* ▼▼▼ 記事本文エリア ▼▼▼ 
-				    変更点：
-				    1. prose-sm: スマホでの文字サイズを14pxにする（これで一行24字程度入ります）
-				    2. tracking-normal: 記事本文だけ字間を標準に戻す（字間が広いと文字数が入らないため）
-				    3. md:prose-lg: PCでは今まで通り大きめの文字サイズにする
+				    ここが一番重要です！
+				    - prose: スマホ用の標準サイズ
+				    - md:prose-lg: PC用の大サイズ（画面幅768px以上で適用）
+				    - px-4: スマホでの左右の余白を適切に確保
 				*/}
-				<div class="w-full max-w-3xl mx-auto px-4 tracking-normal 
-					prose prose-sm prose-slate md:prose-lg 
+				<div class="w-full max-w-3xl mx-auto px-4 prose prose-slate md:prose-lg 
 					prose-headings:font-bold prose-headings:tracking-tight 
 					prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
 					prose-img:rounded-xl prose-img:shadow-md prose-img:w-full">
@@ -116,4 +108,4 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 		
 		<Footer />
 	</body>
-</html>
+</html
