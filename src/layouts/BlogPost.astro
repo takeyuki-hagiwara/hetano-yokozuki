@@ -33,6 +33,7 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 			.prose figure { text-align: center; }
 			.prose figcaption { color: #64748b; font-size: 0.875em; margin-top: 0.5em; }
 
+            /* スマホ専用の強制折り返し */
             @media (max-width: 767px) {
                 p, h1, h2, h3, h4, li, a {
                     overflow-wrap: anywhere;
@@ -76,19 +77,3 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 						</div>
 					</nav>
 				)}
-
-				<div class="w-full max-w-3xl mx-auto px-2 md:px-0 break-words 
-                    prose prose-slate md:prose-lg max-w-none
-					prose-headings:font-bold prose-headings:tracking-tight 
-					prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-					prose-img:rounded-xl prose-img:shadow-md prose-img:w-full">
-					
-					<slot />
-					
-				</div>
-			</article>
-		</main>
-		
-		<Footer />
-	</body>
-</html>
