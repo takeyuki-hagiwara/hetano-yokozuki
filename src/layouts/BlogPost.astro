@@ -48,7 +48,41 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
 		<Header />
-		
+		<style is:global>
+  /* 【重要】強制折り返しルール 
+    どんなに長いURLや英単語でも、画面幅に合わせて無理やり改行させます。
+  */
+  p, h1, h2, h3, h4, h5, h6, li, a, span, div, td, th {
+    overflow-wrap: anywhere !important; /* どこでも改行する（最強） */
+    word-break: break-word !important;  /* 単語の途中でも改行する */
+    white-space: normal !important;     /* 折り返しを許可する */
+  }
+
+  /* 【重要】はみ出し防止ルール
+    画像や動画が画面より大きくなることを物理的に禁止します。
+  */
+  img, video, iframe, canvas, svg {
+    max-width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* コードブロック（pre）だけは横スクロールさせたい場合 */
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre; /* ここは折り返さない（お好みで pre-wrap にすると折り返します） */
+  }
+
+  /* 画面全体の横スクロールを禁止
+    これが「ヘッダーが途切れる」のを防ぐ最後の砦です
+  */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+</style>
 		<main class="w-full max-w-3xl mx-auto px-3 md:px-6 break-words prose prose-slate md:prose-lg 
     prose-headings:font-bold prose-headings:tracking-tight 
     prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
