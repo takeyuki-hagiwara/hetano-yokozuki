@@ -5,7 +5,6 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 
-// 最新の記事を取得
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
@@ -15,6 +14,14 @@ const posts = (await getCollection('blog')).sort(
 <html lang="ja">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+        <style>
+            p, h1, h2, h3, h4, h5, h6, a, span, li, div {
+                overflow-wrap: anywhere !important; /* どこでも改行する */
+                word-break: break-word !important;  /* 単語の途中でも改行する */
+                white-space: normal !important;     /* 折り返しを許可する */
+                max-width: 100% !important;         /* 画面幅を超えさせない */
+            }
+        </style>
 	</head>
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
 		<Header />
@@ -35,17 +42,16 @@ const posts = (await getCollection('blog')).sort(
 			/>
 		</div>
 
-		<main class="max-w-4xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 mt-12 mb-24">
+		<main class="w-full max-w-4xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 mt-12 mb-24">
 			
-			<div class="md:col-span-2">
-				<h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-10 border-b pb-2">Latest Entries</h2>
+			<div class="md:col-span-2 w-full min-w-0"> <h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-10 border-b pb-2">Latest Entries</h2>
 				
-				<ul class="space-y-16">
+				<ul class="space-y-16 w-full">
 					{posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`} class="group block">
-								<article class="flex flex-col gap-3">
-									<h3 class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors leading-tight">
+						<li class="w-full">
+							<a href={`/blog/${post.id}/`} class="group block w-full">
+								<article class="flex flex-col gap-3 w-full">
+									<h3 class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors leading-tight break-words">
 										{post.data.title}
 									</h3>
 									
@@ -55,7 +61,7 @@ const posts = (await getCollection('blog')).sort(
 										</time>
 									</div>
 
-									<p class="text-slate-600 leading-relaxed text-sm md:text-base line-clamp-3">
+									<p class="text-slate-600 leading-relaxed text-sm md:text-base line-clamp-3 break-words">
 										{post.data.description}
 									</p>
 									
@@ -69,14 +75,14 @@ const posts = (await getCollection('blog')).sort(
 				</ul>
 			</div>
 
-			<aside class="md:col-span-1 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 pt-8 md:pt-0">
+			<aside class="md:col-span-1 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 pt-8 md:pt-0 w-full">
 				<div class="sticky top-12">
 					<h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-6">About me / Essay </h2>
 					
 					<div class="space-y-8">
 						<div>
 							<h3 class="font-bold text-lg mb-2">Hi</h3>
-							<p class="text-sm text-slate-600 leading-relaxed">
+							<p class="text-sm text-slate-600 leading-relaxed break-words">
 								hagiwaraです。<br>
 								煎餅汁啜り飲んでないです<br>
 								座右の銘：<br>
@@ -93,32 +99,25 @@ const posts = (await getCollection('blog')).sort(
 </html>
 
 <script>
-	// ▼▼▼ 課題1対策：アニメーションの安定化 ▼▼▼
-	
-	// ページ（画像含む）が完全に読み込まれてからアニメーションの準備をする
+	// アニメーション用スクリプト（維持）
 	window.addEventListener('load', () => {
-		
-		// 1. 万年筆のアニメーション（Intersection Observer）
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {
 					const target = entry.target;
 					target.classList.remove('opacity-0');
 					target.classList.remove('translate-y-12');
-					observer.unobserve(target); // 一度動いたら監視終了
+					observer.unobserve(target);
 				}
 			});
 		}, {
-			rootMargin: '0px 0px -10% 0px', // 画面の下から10%見えたら発火
-			threshold: 0.1 // 要素の10%が見えたら発火
+			rootMargin: '0px 0px -10% 0px',
+			threshold: 0.1
 		});
 
 		const triggers = document.querySelectorAll('.scroll-trigger');
 		triggers.forEach(el => observer.observe(el));
 
-
-		// 2. 背景パララックス（軽量化版）
-		// PCのみ動作させる（スマホでのガタつき防止）
 		if (window.matchMedia("(min-width: 768px)").matches) {
 			const images = document.querySelectorAll('.parallax-image');
 			if (images.length > 0) {
