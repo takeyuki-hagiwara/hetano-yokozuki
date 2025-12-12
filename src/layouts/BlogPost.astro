@@ -49,7 +49,10 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
 		<Header />
 		
-		<main class="mt-8 mb-24 md:mt-12">
+		<main class="w-full max-w-3xl mx-auto px-3 md:px-6 break-words prose prose-slate md:prose-lg 
+    prose-headings:font-bold prose-headings:tracking-tight 
+    prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+    prose-img:rounded-xl prose-img:shadow-md prose-img:w-full">
 			<article>
 				{/* ▼▼▼ 記事ヘッダー ▼▼▼ */}
 				<header class="max-w-3xl mx-auto px-4 mb-8 md:mb-12 text-center">
