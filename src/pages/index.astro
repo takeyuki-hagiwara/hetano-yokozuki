@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 
+// 最新の記事を取得
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
@@ -18,7 +19,7 @@ const posts = (await getCollection('blog')).sort(
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
 		<Header />
 
-		<div class="mt-8 mb-16 max-w-3xl mx-auto px-6 relative group">
+		<div class="mt-8 mb-16 w-full max-w-3xl mx-auto px-4 md:px-6 relative group">
 			<img 
 				src="/base.png" 
 				alt="Main Visual" 
@@ -33,7 +34,8 @@ const posts = (await getCollection('blog')).sort(
 					   delay-500"
 			/>
 		</div>
-		<main class="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 mt-12 mb-24">
+
+		<main class="max-w-4xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 mt-12 mb-24">
 			
 			<div class="md:col-span-2">
 				<h2 class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-10 border-b pb-2">Latest Entries</h2>
@@ -43,7 +45,7 @@ const posts = (await getCollection('blog')).sort(
 						<li>
 							<a href={`/blog/${post.id}/`} class="group block">
 								<article class="flex flex-col gap-3">
-									<h3 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors leading-tight">
+									<h3 class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors leading-tight">
 										{post.data.title}
 									</h3>
 									
@@ -84,52 +86,53 @@ const posts = (await getCollection('blog')).sort(
 					</div>
 				</div>
 			</aside>
-			</main>
+
+		</main>
 		<Footer />
 	</body>
 </html>
 
 <script>
-	// ▼▼▼ アニメーション用スクリプト（そのまま維持） ▼▼▼
+	// ▼▼▼ 課題1対策：アニメーションの安定化 ▼▼▼
 	
-	// パララックス
-	const images = document.querySelectorAll('.parallax-image');
-	function handleScroll() {
-		images.forEach((img) => {
-			const rect = img.getBoundingClientRect();
-			const distanceFromCenter = rect.top + rect.height / 2 - window.innerHeight / 2;
-			const moveY = distanceFromCenter * -0.1; 
-			(img as HTMLElement).style.transform = `translateY(${moveY}px) scale(1.05)`;
+	// ページ（画像含む）が完全に読み込まれてからアニメーションの準備をする
+	window.addEventListener('load', () => {
+		
+		// 1. 万年筆のアニメーション（Intersection Observer）
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					const target = entry.target;
+					target.classList.remove('opacity-0');
+					target.classList.remove('translate-y-12');
+					observer.unobserve(target); // 一度動いたら監視終了
+				}
+			});
+		}, {
+			rootMargin: '0px 0px -10% 0px', // 画面の下から10%見えたら発火
+			threshold: 0.1 // 要素の10%が見えたら発火
 		});
-	}
-	window.addEventListener('scroll', handleScroll);
-	handleScroll();
 
-	// 万年筆アニメーション
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const target = entry.target;
-				target.classList.remove('opacity-0');
-				target.classList.remove('translate-y-12');
-				target.classList.remove('translate-y-20');
-				observer.unobserve(target);
+		const triggers = document.querySelectorAll('.scroll-trigger');
+		triggers.forEach(el => observer.observe(el));
+
+
+		// 2. 背景パララックス（軽量化版）
+		// PCのみ動作させる（スマホでのガタつき防止）
+		if (window.matchMedia("(min-width: 768px)").matches) {
+			const images = document.querySelectorAll('.parallax-image');
+			if (images.length > 0) {
+				window.addEventListener('scroll', () => {
+					requestAnimationFrame(() => {
+						images.forEach((img) => {
+							const rect = img.getBoundingClientRect();
+							const distanceFromCenter = rect.top + rect.height / 2 - window.innerHeight / 2;
+							const moveY = distanceFromCenter * -0.05; 
+							(img as HTMLElement).style.transform = `translateY(${moveY}px)`;
+						});
+					});
+				});
 			}
-		});
-	}, {
-		rootMargin: '0px 0px -10% 0px'
+		}
 	});
-
-	document.querySelectorAll('.scroll-trigger').forEach(el => observer.observe(el));
 </script>
-
-<style>
-	/* 使わなくなったクラスもありますが、念のため残しています */
-	.aspect-\[4\/3\] {
-		overflow: hidden; 
-	}
-	.parallax-image {
-		will-change: transform;
-		transition: transform 0.1s ease-out;
-	}
-</style>
