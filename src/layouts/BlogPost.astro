@@ -4,55 +4,23 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-// ▼▼▼ 目次機能のための型定義 ▼▼▼
-import type { MarkdownHeading } from 'astro';
+type Props = CollectionEntry<'blog'>['data'];
 
-type Props = CollectionEntry<'blog'>['data'] & {
-	headings?: MarkdownHeading[];
-};
-
-const { title, description, pubDate, updatedDate, headings } = Astro.props;
+const { title, description, pubDate, updatedDate } = Astro.props;
 ---
 
 <html lang="ja">
 	<head>
 		<BaseHead title={title} description={description} />
-		<style>
-			/* 見出しのデザイン調整 */
-			.prose h2 {
-				border-left: 5px solid #cbd5e1;
-				padding-left: 0.75em;
-				margin-top: 2.5em;
-				margin-bottom: 1em;
-			}
-			.prose h3 {
-				border-bottom: 2px solid #e2e8f0;
-				padding-bottom: 0.3em;
-				margin-top: 2em;
-			}
-			.prose strong {
-				background: linear-gradient(transparent 60%, #fef08a 60%);
-			}
-			
-			/* 画像のキャプション（figcaption）を中央寄せにする */
-			.prose figure {
-				text-align: center;
-			}
-			.prose figcaption {
-				color: #64748b;
-				font-size: 0.875em;
-				margin-top: 0.5em;
-			}
-		</style>
 	</head>
 
 	<body class="bg-[#fcfcfc] text-slate-800 font-sans tracking-widest leading-loose">
 		<Header />
 		
-		<main class="mt-8 mb-24 md:mt-12">
+		<main class="mt-12 mb-24">
 			<article>
-				{/* ▼▼▼ 記事ヘッダー ▼▼▼ */}
-				<header class="max-w-3xl mx-auto px-4 mb-8 md:mb-12 text-center">
+				{/* ▼▼▼ 記事ヘッダー（タイトル・日付） ▼▼▼ */}
+				<header class="max-w-3xl mx-auto px-6 mb-12 text-center">
 					<div class="mb-4 text-sm font-mono text-slate-400">
 						<time datetime={pubDate.toISOString()}>
 							{pubDate.toLocaleDateString('ja-JP')}
@@ -65,12 +33,54 @@ const { title, description, pubDate, updatedDate, headings } = Astro.props;
 							)
 						}
 					</div>
-					<h1 class="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6">
+					<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6">
 						{title}
 					</h1>
 					<hr class="border-slate-200 w-12 mx-auto" />
 				</header>
 
-				{/* ▼▼▼ 目次エリア（あれば表示） ▼▼▼ */}
-				{headings && headings.length > 0 && (
-					<nav class="max-w-3xl mx-auto px-4 my-
+				{/* ▼▼▼ 記事本文エリア ▼▼▼ 
+				    prose: 本文を自動整形する魔法のクラス
+				    prose-slate: 色味をスレートグレーに統一
+				    prose-lg: 文字サイズを少し大きくして読みやすく
+				*/}
+				<div class="max-w-3xl mx-auto px-6 prose prose-slate prose-lg 
+					prose-headings:font-bold prose-headings:tracking-tight 
+					prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+					prose-img:rounded-xl prose-img:shadow-md">
+					
+					<slot />
+					
+				</div>
+			</article>
+		</main>
+		
+		<Footer />
+	</body>
+</html>
+<style>
+	/* ...既存のスタイルがあればその下に... */
+
+	/* 記事本文のデザイン調整 */
+	
+	/* H2見出し：左に太い線を入れて強調 */
+	.prose h2 {
+		border-left: 5px solid #cbd5e1; /* 線の色（グレー） */
+		padding-left: 0.75em;
+		margin-top: 2.5em;
+		margin-bottom: 1em;
+	}
+
+	/* H3見出し：下に細い線を入れる */
+	.prose h3 {
+		border-bottom: 2px solid #e2e8f0;
+		padding-bottom: 0.3em;
+		margin-top: 2em;
+	}
+
+	/* 太字の強調 */
+	.prose strong {
+		color: #1e293b;
+		background: linear-gradient(transparent 60%, #fef08a 60%); /* 黄色のマーカー風 */
+	}
+</style>
