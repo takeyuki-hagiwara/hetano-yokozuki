@@ -153,3 +153,10 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+/* ▼▼▼ 追加コード ▼▼▼ */
+html, body {
+  overflow-x: hidden; /* 横方向のはみ出しを禁止 */
+  width: 100%;        /* 幅を画面幅に合わせる */
+  margin: 0;
+  padding: 0;
+}
